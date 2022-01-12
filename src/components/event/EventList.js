@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { EventContext } from "./EventProvider.js";
 
 export const EventList = (props) => {
-  const { events, getEvents, joinEvent } = useContext(EventContext);
+  const { events, getEvents, joinEvent, leaveEvent } = useContext(EventContext);
 
   useEffect(() => {
     getEvents();
@@ -22,7 +22,7 @@ export const EventList = (props) => {
             <h3>{event.name}</h3>
             <section key={event.id} className="registration">
                 <div className="registration__game">Game: {event.game.name}</div>
-                <div>Hosted By: {event.host.user.first_name}</div>
+                <div>Hosted By: {event.host.user.firstName}</div>
                 <div>Game Time: {event.title}</div>
                 <div>
                   {new Date(event.time).toLocaleDateString("en-US", {
@@ -42,7 +42,8 @@ export const EventList = (props) => {
                   Leave
                 </button>
               ) : (
-                <button className="btn btn-2" onClick={() => joinEvent(event.id)}>
+                <button className="btn btn-2" 
+                onClick={() => joinEvent(event.id)}>
                   Join
                 </button>
               )}

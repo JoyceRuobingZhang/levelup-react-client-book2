@@ -38,7 +38,9 @@ export const EventProvider = (props) => {
       headers: {
         Authorization: `Token ${localStorage.getItem("lu_token")}`,
       },
-    }).then((response) => response.json());
+    })
+    // .then((response) => response.json()) can't parse "NO CONTENT"
+    .then(getEvents);
   };
 
   const leaveEvent = (eventId) => {
@@ -48,7 +50,7 @@ export const EventProvider = (props) => {
         Authorization: `Token ${localStorage.getItem("lu_token")}`,
       },
     })
-      .then((response) => response.json())
+      // .then((response) => response.json())
       .then(getEvents);
   };
 

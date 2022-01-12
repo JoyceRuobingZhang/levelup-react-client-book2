@@ -4,7 +4,7 @@ import { GameContext } from "./GameProvider.js"
 import "./Game.css"
 
 export const GameList = (props) => {
-    const { games, getGames } = useContext(GameContext)
+    const { games, getGames, deleteGame } = useContext(GameContext)
 
     useEffect(() => {
         getGames()
@@ -21,13 +21,18 @@ export const GameList = (props) => {
                     return (
                     <section key={`game--${game.id}`} className="game">
                         {/*game.created_by is an object  */}
-                        <div className="game__title">{game.name} by {game.created_by.user.first_name}</div>
-                        <div className="game__players">{game.player_limit} players needed</div>
+                        <div className="game__title">{game.name} by {game.createdBy.user.firstName}</div>
+                        <div className="game__players">{game.playerLimit} players needed</div>
                         {/* <div className="game__skillLevel">Skill level is {game.skill_level}</div> */}
                         {
-                        game.created_by.user.id === loginGamerId
-                        ? <button>Delete</button>
-                        : null
+                            game.createdBy.user.id === loginGamerId
+                            ? <button onClick={() => {deleteGame(game.id)}}>Delete</button>
+                            : null
+                        }
+                        {
+                            game.createdBy.user.id === loginGamerId
+                            ? <button onClick={() => {history.push(`/games/edit/${game.id}`)}}>Edit</button>
+                            : null
                         }
                     </section>)
                 })

@@ -19,8 +19,8 @@ export const Profile = () => {
           <h3>Your Info</h3>
         </header>
         <div className="profile__name">
-          Welcome: {profile.gamer && profile.gamer.user.first_name}{" "}
-          {profile.gamer && profile.gamer.user.last_name}
+          Welcome: {profile.gamer && profile.gamer.user.firstName}{" "}
+          {profile.gamer && profile.gamer.user.lastName}
         </div>
         <div className="profile__username">
           Username: {profile.gamer && profile.gamer.user.username}

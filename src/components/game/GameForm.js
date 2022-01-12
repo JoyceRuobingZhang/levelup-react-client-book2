@@ -1,36 +1,48 @@
 import React, { useContext, useState, useEffect } from "react";
 import { GameContext } from "./GameProvider.js";
 import { useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 export const GameForm = () => {
     const history = useHistory();
-    const { createGame, getGameTypes, gameTypes } = useContext(GameContext);
-    /*
-            Since the input fields are bound to the values of
-            the properties of this state variable, you need to
-            provide some default values.
-    */
+    const { createGame, getGameTypes, gameTypes, getGameById } = useContext(GameContext);
 
-    const [currentGame, setCurrentGame] = useState({
-        // skillLevel: 1,
-        playerLimit: 0,
-        name: "",
-        gameTypeId: 0,
-    });
-
-    /* Get game types on initialization so that the <select> element presents game type choices to the user. */
+  // Get game types on initialization so that the <select> element presents game type choices to the user. 
     useEffect(() => {
-        getGameTypes();
+    getGameTypes();
     }, []);
 
-  /*    REFACTOR CHALLENGE START
+    const {gameId} = useParams()
+  
+  /*  Since the input fields are bound to the values of the properties of this state variable, 
+      you need to provide some default values.  */
+    const [currentGame, setCurrentGame] = useState({gametype: {}});
 
-        Can you refactor this code so that all property
-        state changes can be handled with a single function
-        instead of five functions that all, largely, do
-        the same thing?  One hint: [event.target.name]
-    */
+  // Get game from API when component initializes
+    useEffect(() => {
+      if(gameId){
+        getGameById(parseInt(gameId))
+        .then(game => {
+          // cleanGame = {...game,  }
+          // cleanGame.playerLimit = game.player_limit
+          setCurrentGame(game)}) /* getGameById is Async!!! */
+      } else {
+        setCurrentGame(
+          {
+            // skillLevel: 1,
+            playerLimit: 0,
+            name: "",
+            gameTypeId: 0,
+        }
+        )
+      }
+    }, [gameId, gameTypes]) 
 
+ 
+  /*  REFACTOR CHALLENGE START
+  Can you refactor this code so that all property state changes can be handled with a single function
+  instead of five functions that all, largely, do the same thing?  One hint: [event.target.name]
+  */
     const handleControlledInputChange = (event) => {
         const newGameState = { ...currentGame };
         newGameState[event.target.name] = event.target.value;
@@ -51,6 +63,8 @@ export const GameForm = () => {
             autoFocus
             className="form-control"
             value={currentGame.name}
+            // dv: be there when <input> loads
+            // v: current state of the value
             onChange={handleControlledInputChange}
           />
         </div>
@@ -74,8 +88,8 @@ export const GameForm = () => {
       <fieldset>
         <div className="form-group">
           <label htmlFor="title">Game Type: </label>
-          <select value={currentGame.gameTypeId} name="gameTypeId" id="customerAnimal" 
-          className="form-control" onChange={handleControlledInputChange}>
+          <select value={currentGame.gametype.id} name="gameTypeId" id="customerAnimal" 
+          className="form-control" onChange={handleControlledInputChange} >
               <option value="0">Please Select a Game Type</option>
               {
                   gameTypes.map(t => {
@@ -96,7 +110,10 @@ export const GameForm = () => {
           const game = {
             name: currentGame.name,
             player_limit: parseInt(currentGame.playerLimit),
-            gameTypeId: parseInt(currentGame.gameTypeId),
+            // gameTypeId:  parseInt(currentGame.gameTypeId)
+            gametype: {
+              id: parseInt(currentGame.gameTypeId)
+            },
           };
           // Send POST request to your API
           createGame(game).then(() => history.push("/games"));
